@@ -38,7 +38,7 @@ This project allows you to migrate repositories from an old GitHub account to a 
    Build and run the application with the command:
 
    ```bash
-   mvn exec:java -Dexec.mainClass="RafaelJ13.github_mighrator.Main"
+   mvn exec:java -Dexec.mainClass="RafaelJ13.github_migrator.Main"
    ```
 
 4. **Enter the required information:**
