@@ -26,32 +26,32 @@ public class Main {
         System.out.println(titleColor + "###########################");
         System.out.println("GitHub Repository Migrator");
         System.out.println("###########################" + reset);
-        System.out.println("\nEste programa permite migrar repositórios de uma conta antiga para uma nova.");
-        System.out.println("Você pode escolher entre migrar repositórios públicos ou privados.\n");
+        System.out.println("\nThis program allows you to migrate repositories from an old account to a new one.");
+        System.out.println("You can choose to migrate public or private repositories.\n");
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print(promptColor + "Digite o seu token do GitHub: " + reset);
+        System.out.print(promptColor + "Enter your GitHub token: " + reset);
         String token = scanner.nextLine();
 
-        System.out.print(promptColor + "Digite o nome de usuário atual (onde os repositórios serão criados): " + reset);
+        System.out.print(promptColor + "Enter the current username (where the repositories will be created): " + reset);
         String currentUsername = scanner.nextLine();
 
-        System.out.print(promptColor + "Digite o nome de usuário antigo (de onde os repositórios serão copiados): " + reset);
+        System.out.print(promptColor + "Enter the old username (from which the repositories will be copied): " + reset);
         String oldUsername = scanner.nextLine();
 
-        System.out.print(promptColor + "Deseja migrar repositórios públicos ou privados? (privado / publico): " + reset);
+        System.out.print(promptColor + "Do you want to migrate public or private repositories? (private / public): " + reset);
         String repoType = scanner.nextLine();
 
-        if (!repoType.equalsIgnoreCase("publico") && !repoType.equalsIgnoreCase("privado")) {
-            System.out.println("Opção inválida. Considerando repositórios públicos.");
-            repoType = "publico";
+        if (!repoType.equalsIgnoreCase("public") && !repoType.equalsIgnoreCase("private")) {
+            System.out.println("Invalid option. Considering public repositories.");
+            repoType = "public";
         }
 
         String response = sendGetRequest("users/" + oldUsername + "/repos?type=" + repoType, token);
 
         if (response == null) {
-            System.out.println("Erro ao acessar os repositórios da conta antiga.");
+            System.out.println("Error accessing the repositories of the old account.");
             return;
         }
 
@@ -81,7 +81,7 @@ public class Main {
 
             int responseCode = connection.getResponseCode();
             if (responseCode != 200) {
-                System.out.println("Erro ao acessar a URL: " + url + " | Código de resposta: " + responseCode);
+                System.out.println("Error accessing the URL: " + url + " | Response code: " + responseCode);
                 return null;
             }
 
@@ -107,7 +107,7 @@ public class Main {
         try {
             String repoName = extractRepoNameFromUrl(repoUrl);
             if (repoName == null) {
-                System.out.println("Não foi possível extrair o nome do repositório.");
+                System.out.println("Could not extract repository name.");
                 return;
             }
 
@@ -127,10 +127,10 @@ public class Main {
 
             int responseCode = connection.getResponseCode();
             if (responseCode == 201) {
-                System.out.println("Repositório " + repoName + " criado com sucesso.");
+                System.out.println("Repository " + repoName + " created successfully.");
                 cloneRepoContent(repoUrl, repoName, currentUsername, token);
             } else {
-                System.out.println("Erro ao criar repositório: " + responseCode);
+                System.out.println("Error creating repository: " + responseCode);
             }
 
             connection.disconnect();
@@ -148,7 +148,7 @@ public class Main {
         if (matcher.find()) {
             return matcher.group(1);
         } else {
-            System.out.println("URL inválida ou repositório não encontrado.");
+            System.out.println("Invalid URL or repository not found.");
             return null;
         }
     }
@@ -159,7 +159,7 @@ public class Main {
             String repoName = extractRepoNameFromUrl(repoUrl);
 
             if (repoName == null) {
-                System.out.println("Nome do repositório não encontrado. Verifique a URL.");
+                System.out.println("Repository name not found. Check the URL.");
                 return;
             }
 
@@ -167,7 +167,7 @@ public class Main {
             String response = sendGetRequest(apiEndpoint, token);
 
             if (response == null) {
-                System.out.println("Erro ao acessar o conteúdo do repositório " + repoName);
+                System.out.println("Error accessing the content of repository " + repoName);
                 return;
             }
 
@@ -186,10 +186,10 @@ public class Main {
                         if (fileContent != null && !fileContent.isEmpty()) {
                             uploadFileToNewRepo(filePath, fileContent, newRepoName, currentUsername, token);
                         } else {
-                            System.out.println("Conteúdo do arquivo " + filePath + " está vazio ou não foi encontrado.");
+                            System.out.println("Content of file " + filePath + " is empty or not found.");
                         }
                     } else {
-                        System.out.println("A URL de download do arquivo " + filePath + " não está disponível.");
+                        System.out.println("Download URL for file " + filePath + " is not available.");
                     }
                 }
             }
@@ -207,7 +207,7 @@ public class Main {
 
             int responseCode = connection.getResponseCode();
             if (responseCode != 200) {
-                System.out.println("Erro ao acessar o arquivo: " + fileContentUrl + " | Código de resposta: " + responseCode);
+                System.out.println("Error accessing the file: " + fileContentUrl + " | Response code: " + responseCode);
                 return null;
             }
 
@@ -241,7 +241,7 @@ public class Main {
 
             String encodedContent = Base64.getEncoder().encodeToString(fileContent.getBytes(StandardCharsets.UTF_8));
 
-            String jsonBody = "{\"message\": \"Criando arquivo: " + filePath + "\", \"content\": \"" + encodedContent + "\"}";
+            String jsonBody = "{\"message\": \"Creating file: " + filePath + "\", \"content\": \"" + encodedContent + "\"}";
 
             try (OutputStream os = connection.getOutputStream()) {
                 byte[] input = jsonBody.getBytes(StandardCharsets.UTF_8);
@@ -250,9 +250,9 @@ public class Main {
 
             int responseCode = connection.getResponseCode();
             if (responseCode == 201) {
-                System.out.println("Arquivo " + filePath + " enviado com sucesso.");
+                System.out.println("File " + filePath + " uploaded successfully.");
             } else {
-                System.out.println("Erro ao enviar arquivo " + filePath + ": " + responseCode);
+                System.out.println("Error uploading file " + filePath + ": " + responseCode);
             }
 
             connection.disconnect();
